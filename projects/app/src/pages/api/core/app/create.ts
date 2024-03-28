@@ -5,7 +5,6 @@ import type { CreateAppParams } from '@fastgpt/global/core/app/api.d';
 import { AppTypeEnum } from '@fastgpt/global/core/app/constants';
 import { MongoApp } from '@fastgpt/service/core/app/schema';
 import { authUserNotVisitor } from '@fastgpt/service/support/permission/auth/user';
-import { SimpleModeTemplate_FastGPT_Universal } from '@/global/core/app/constants';
 import { checkTeamAppLimit } from '@fastgpt/service/support/permission/teamLimit';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 
@@ -47,8 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       tmbId,
       tmbName: teamMember.name,
       modules,
-      type,
-      simpleTemplateId: SimpleModeTemplate_FastGPT_Universal.id
+      type
     });
 
     jsonRes(res, {

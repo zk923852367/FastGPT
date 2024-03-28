@@ -9,9 +9,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Button,
-  Image,
-  Grid
+  Image
 } from '@chakra-ui/react';
 import React, { useMemo } from 'react';
 import ChatController, { type ChatControllerProps } from './ChatController';
@@ -88,25 +86,39 @@ const ChatItem = ({
       return (
         <>
           {files.length > 0 && <FilesBlock files={files} />}
-          <Markdown source={text} isChatting={false} />
+          <Markdown source={text} />
         </>
       );
     }
+
     /* AI */
     return (
       <Flex flexDirection={'column'} gap={2}>
         {chat.value.map((value, i) => {
           const key = `${chat.dataId}-ai-${i}`;
           if (value.text) {
-            let source = value.text?.content || '';
+            let source = (value.text?.content || '').trim();
 
-            if (isLastChild && !isChatting && questionGuides.length > 0) {
+            if (!source && chat.value.length > 1) return <></>;
+
+            if (
+              isLastChild &&
+              !isChatting &&
+              questionGuides.length > 0 &&
+              i === chat.value.length - 1
+            ) {
               source = `${source}
 \`\`\`${CodeClassName.questionGuide}
 ${JSON.stringify(questionGuides)}`;
             }
 
-            return <Markdown key={key} source={source} isChatting={isLastChild && isChatting} />;
+            return (
+              <Markdown
+                key={key}
+                source={source}
+                showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+              />
+            );
           }
           if (value.type === ChatItemValueTypeEnum.tool && value.tools) {
             return (
@@ -126,6 +138,7 @@ ${JSON.stringify(questionGuides)}`;
                       return tool.response;
                     }
                   })();
+
                   return (
                     <Box key={tool.id}>
                       <Accordion allowToggle>
@@ -158,7 +171,7 @@ ${JSON.stringify(questionGuides)}`;
                             maxH={'500px'}
                             overflowY={'auto'}
                           >
-                            {toolParams && (
+                            {toolParams && toolParams !== '{}' && (
                               <Markdown
                                 source={`~~~json#Input
 ${toolParams}`}
@@ -233,4 +246,4 @@ ${toolResponse}`}
   );
 };
 
-export default ChatItem;
+export default React.memo(ChatItem);

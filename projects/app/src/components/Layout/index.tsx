@@ -13,10 +13,10 @@ import Auth from './auth';
 import Navbar from './navbar';
 import NavbarPhone from './navbarPhone';
 import TeamBox from './teamBox';
-const UpdateInviteModal = dynamic(
-  () => import('@/components/support/user/team/UpdateInviteModal'),
-  { ssr: false }
-);
+const UpdateInviteModal = dynamic(() => import('@/components/support/user/team/UpdateInviteModal'));
+const NotSufficientModal = dynamic(() => import('@/components/support/wallet/NotSufficientModal'));
+const SystemMsgModal = dynamic(() => import('@/components/support/user/inform/SystemMsgModal'));
+const ImportantInform = dynamic(() => import('@/components/support/user/inform/ImportantInform'));
 
 const pcUnShowLayoutRoute: Record<string, boolean> = {
   '/': true,
@@ -45,7 +45,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
   const { colorMode, setColorMode } = useColorMode();
   const { Loading } = useLoading();
-  const { loading, setScreenWidth, isPc, feConfigs } = useSystemStore();
+  const { loading, setScreenWidth, isPc, feConfigs, isNotSufficientModal } = useSystemStore();
   const { userInfo } = useUserStore();
 
   const isChatPage = useMemo(
@@ -82,10 +82,12 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     };
   }, [setScreenWidth]);
 
-  const { data: unread = 0 } = useQuery(['getUnreadCount'], getUnreadCount, {
+  const { data, refetch: refetchUnRead } = useQuery(['getUnreadCount'], getUnreadCount, {
     enabled: !!userInfo && !!feConfigs.isPlus,
     refetchInterval: 10000
   });
+  const unread = data?.unReadCount || 0;
+  const importantInforms = data?.importantInforms || [];
 
   const isHideNavbar = !!pcUnShowLayoutRoute[router.pathname];
 
@@ -128,6 +130,11 @@ const Layout = ({ children }: { children: JSX.Element }) => {
         )}
 
         {!!userInfo && <UpdateInviteModal />}
+        {isNotSufficientModal && !isHideNavbar && <NotSufficientModal />}
+        {!!userInfo && <SystemMsgModal />}
+        {!!userInfo && importantInforms.length > 0 && (
+          <ImportantInform informs={importantInforms} refetch={refetchUnRead} />
+        )}
       </Box>
       {router.pathname !== '/login' && <TeamBox />}
       <Loading loading={loading} zIndex={999999} />

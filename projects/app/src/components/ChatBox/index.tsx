@@ -257,10 +257,7 @@ const ChatBox = (
             };
             return {
               ...item,
-              value:
-                lastValue && lastValue.text
-                  ? item.value.slice(0, -1).concat(val)
-                  : item.value.concat(val)
+              value: item.value.concat(val)
             };
           } else if (
             event === SseResponseEventEnum.toolParams &&
@@ -441,6 +438,7 @@ const ChatBox = (
           chatController.current = abortSignal;
 
           const messages = chats2GPTMessages({ messages: newChatList, reserveId: true });
+
           const {
             responseData,
             responseText,
@@ -537,10 +535,9 @@ const ChatBox = (
         setLoading(true);
         const index = chatHistories.findIndex((item) => item.dataId === dataId);
         const delHistory = chatHistories.slice(index);
-
         try {
           await Promise.all(
-            delHistory.map(async (item) => {
+            delHistory.map((item) => {
               if (item.dataId) {
                 return onDelMessage({ contentId: item.dataId });
               }
@@ -563,14 +560,29 @@ const ChatBox = (
     },
     [chatHistories, onDelMessage, sendPrompt, setLoading, toast]
   );
-  // delete one message
+  // delete one message(One human and the ai response)
   const delOneMessage = useCallback(
     (dataId?: string) => {
       if (!dataId || !onDelMessage) return;
       return () => {
-        setChatHistories((state) => state.filter((chat) => chat.dataId !== dataId));
-        onDelMessage({
-          contentId: dataId
+        setChatHistories((state) => {
+          let aiIndex = -1;
+
+          return state.filter((chat, i) => {
+            if (chat.dataId === dataId) {
+              aiIndex = i + 1;
+              onDelMessage({
+                contentId: dataId
+              });
+              return false;
+            } else if (aiIndex === i && chat.obj === ChatRoleEnum.AI && chat.dataId) {
+              onDelMessage({
+                contentId: chat.dataId
+              });
+              return false;
+            }
+            return true;
+          });
         });
       };
     },
@@ -630,6 +642,8 @@ const ChatBox = (
           updateChatUserFeedback({
             appId,
             chatId,
+            teamId,
+            teamToken,
             chatItemId: chat.dataId,
             shareId,
             outLinkUid,
@@ -638,7 +652,7 @@ const ChatBox = (
         } catch (error) {}
       };
     },
-    [appId, chatId, feedbackType, outLinkUid, shareId]
+    [appId, chatId, feedbackType, outLinkUid, shareId, teamId, teamToken]
   );
   const onCloseUserLike = useCallback(
     (chat: ChatSiteItemType) => {
@@ -654,13 +668,15 @@ const ChatBox = (
         );
         updateChatUserFeedback({
           appId,
+          teamId,
+          teamToken,
           chatId,
           chatItemId: chat.dataId,
           userGoodFeedback: undefined
         });
       };
     },
-    [appId, chatId, feedbackType]
+    [appId, chatId, feedbackType, teamId, teamToken]
   );
   const onADdUserDislike = useCallback(
     (chat: ChatSiteItemType) => {
@@ -687,6 +703,8 @@ const ChatBox = (
               chatId,
               chatItemId: chat.dataId,
               shareId,
+              teamId,
+              teamToken,
               outLinkUid
             });
           } catch (error) {}
@@ -695,7 +713,7 @@ const ChatBox = (
         return () => setFeedbackId(chat.dataId);
       }
     },
-    [appId, chatId, feedbackType, outLinkUid, shareId]
+    [appId, chatId, feedbackType, outLinkUid, shareId, teamId, teamToken]
   );
   const onReadUserDislike = useCallback(
     (chat: ChatSiteItemType) => {
@@ -869,7 +887,6 @@ const ChatBox = (
                       avatar={appAvatar}
                       chat={item}
                       isChatting={isChatting}
-                      onDelete={delOneMessage(item.dataId)}
                       {...(item.obj === 'AI' && {
                         setChatHistories,
                         showVoiceIcon,
@@ -921,7 +938,7 @@ const ChatBox = (
                             icon="core/app/markLight"
                             text={t('core.chat.Admin Mark Content')}
                           />
-                          <Box whiteSpace={'pre'}>
+                          <Box whiteSpace={'pre-wrap'}>
                             <Box color={'black'}>{item.adminFeedback.q}</Box>
                             <Box color={'myGray.600'}>{item.adminFeedback.a}</Box>
                           </Box>
@@ -955,6 +972,8 @@ const ChatBox = (
       {!!feedbackId && chatId && appId && (
         <FeedbackModal
           appId={appId}
+          teamId={teamId}
+          teamToken={teamToken}
           chatId={chatId}
           chatItemId={feedbackId}
           shareId={shareId}

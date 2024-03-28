@@ -18,7 +18,7 @@ import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useSearchTestStore, SearchTestStoreItemType } from '@/web/core/dataset/store/searchTest';
 import { postSearchText } from '@/web/core/dataset/api';
 import MyIcon from '@fastgpt/web/components/common/Icon';
-import { useRequest } from '@/web/common/hooks/useRequest';
+import { useRequest } from '@fastgpt/web/hooks/useRequest';
 import { formatTimeToChatTime } from '@/utils/tools';
 import { getErrText } from '@fastgpt/global/common/error/utils';
 import { useToast } from '@fastgpt/web/hooks/useToast';
@@ -54,7 +54,6 @@ type FormType = {
     similarity?: number;
     limit?: number;
     usingReRank?: boolean;
-    searchEmptyText?: string;
     datasetSearchUsingExtensionQuery?: boolean;
     datasetSearchExtensionModel?: string;
     datasetSearchExtensionBg?: string;
