@@ -31,6 +31,7 @@ export type TeamMemberSchema = {
   userId: string;
   createTime: Date;
   name: string;
+  avatar: string;
   role: `${TeamMemberRoleEnum}`;
   status: `${TeamMemberStatusEnum}`;
   defaultTeam: boolean;
@@ -86,6 +87,7 @@ export type InviteTeamMemberItemType = {
   userId?: string;
   teamId: string;
   name: string;
+  avatar?: string;
   username: string;
   role: `${TeamMemberRoleEnum}`;
   status: `${TeamMemberStatusEnum}`;

@@ -129,7 +129,18 @@ const AppCard = ({ appId }: { appId: string }) => {
             >
               {t('core.app.navbar.Publish')}
             </Button>
-            {appDetail.canWrite && (
+            {appDetail.canWrite && feConfigs?.show_team_chat && (
+              <Button
+                mr={3}
+                size={['sm', 'md']}
+                variant={'whitePrimary'}
+                leftIcon={<DragHandleIcon w={'16px'} />}
+                onClick={() => setTeamTagsSet(appDetail)}
+              >
+                {t('common.Team Tags Set')}
+              </Button>
+            )}
+            {appDetail.isOwner && (
               <Button
                 size={['sm', 'md']}
                 variant={'whitePrimary'}

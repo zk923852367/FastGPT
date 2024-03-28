@@ -16,7 +16,8 @@ import type {
   GetTrainingQueueProps,
   GetTrainingQueueResponse,
   SearchTestProps,
-  SearchTestResponse
+  SearchTestResponse,
+  ImageResponseType
 } from '@/global/core/dataset/api.d';
 import type {
   UpdateDatasetDataProps,
@@ -127,5 +128,5 @@ export const getTrainingQueueLen = (data: GetTrainingQueueProps) =>
 export const getFileViewUrl = (fileId: string) =>
   GET<string>('/core/dataset/file/getPreviewUrl', { fileId });
 
-export const createImageDescription = (image: string, type: string) =>
-  GET<string>('/core/dataset/data/createImageDesc', { image, type });
+export const createImageDescription = (data: ImageResponseType) =>
+  POST('/core/dataset/data/createImageDesc', data);

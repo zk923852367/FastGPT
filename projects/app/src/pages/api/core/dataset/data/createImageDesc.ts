@@ -12,14 +12,25 @@ export type Response = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { image, type } = req.query as {
+    const { image, type } = req.body as {
       image: string;
       type: string;
     };
-
+    const response = await fetch(`${process.env.VL_URL}/api/image/summary`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ image_url: image, text_content: type })
+    });
+    const result = await response.json();
+    const { success, message, data } = result;
+    if (!success) {
+      throw new Error(message);
+    }
     jsonRes(res, {
       data: {
-        description: '这是是一个流程图，情分析途中的场景'
+        ...data
       }
     });
   } catch (err) {

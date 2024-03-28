@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       {
         teamId
       },
-      { memberName: '$name', tmbId: '$_id', teamId: 1, userId: 1, role: 1, status: 1 }
+      { memberName: '$name', tmbId: '$_id', teamId: 1, userId: 1, role: 1, status: 1, avatar: 1 }
     );
     jsonRes(res, {
       data: teamMembers

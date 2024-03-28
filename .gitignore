@@ -41,6 +41,7 @@ docSite/.vercel
 #db
 mongo/
 pg/
+mysql/
 
 .idea/
 files/helm/fastgpt/fastgpt-0.1.0.tgz

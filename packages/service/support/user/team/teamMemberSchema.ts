@@ -32,6 +32,10 @@ const TeamMemberSchema = new Schema({
     type: String,
     enum: Object.keys(TeamMemberStatusMap)
   },
+  avatar: {
+    type: String,
+    default: '/icon/human.svg'
+  },
   createTime: {
     type: Date,
     default: () => new Date()

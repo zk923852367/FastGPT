@@ -182,3 +182,8 @@ export type SearchDataResponseItemType = Omit<
   score: { type: `${SearchScoreTypeEnum}`; value: number; index: number }[];
   // score: number;
 };
+
+export type ImageItemType = {
+  type: string;
+  label?: string;
+};

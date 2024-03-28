@@ -20,6 +20,7 @@ export interface AppSchema {
   type: `${AppTypeEnum}`;
   avatar: string;
   intro: string;
+  tmbName: string;
   updateTime: number;
   modules: ModuleItemType[];
   permission: `${PermissionTypeEnum}`;

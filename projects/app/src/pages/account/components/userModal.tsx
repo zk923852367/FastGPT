@@ -14,7 +14,7 @@ import {
   useTheme
 } from '@chakra-ui/react';
 import React, { useCallback, useState } from 'react';
-import MyModal from '@/components/MyModal';
+import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { postCreateUser, putUpdateUser } from '@/web/support/user/manage/api';

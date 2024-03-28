@@ -31,16 +31,16 @@ import {
 } from '@/web/core/dataset/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import MyIcon from '@fastgpt/web/components/common/Icon';
-import MyModal from '@/components/MyModal';
+import MyModal from '@fastgpt/web/components/common/MyModal';
 import MyTooltip from '@/components/MyTooltip';
 import { CheckCircleIcon, ChevronDownIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 import { useRequest } from '@/web/common/hooks/useRequest';
 import { countPromptTokens } from '@fastgpt/global/common/string/tiktoken';
-import { useConfirm } from '@/web/common/hooks/useConfirm';
+import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
 import { getDefaultIndex } from '@fastgpt/global/core/dataset/utils';
-import { DatasetDataIndexItemType } from '@fastgpt/global/core/dataset/type';
+import { DatasetDataIndexItemType, ImageItemType } from '@fastgpt/global/core/dataset/type';
 import SideTabs from '@/components/SideTabs';
 import DeleteIcon from '@fastgpt/web/components/common/Icon/delete';
 import { defaultCollectionDetail } from '@/constants/dataset';
@@ -418,7 +418,7 @@ const InputTab = ({
   const { t } = useTranslation();
   const { isPc } = useSystemStore();
   const [imageUrl, setImageUrl] = useState('');
-  const [imageItem, setImageItem] = useState('');
+  const [imageItem, setImageItem] = useState<ImageItemType>();
   const [inputType, setInputType] = useState(InputTypeEnum.q);
   const ref = useRef<HTMLButtonElement>(null);
   const menuItemStyles: MenuItemProps = {
@@ -438,22 +438,26 @@ const InputTab = ({
     setImageUrl(url);
   }, [url]);
 
-  const imageMaps = [
+  const imageMaps: ImageItemType[] = [
     {
       type: '1',
-      label: '关系图'
-    },
-    {
-      type: '2',
       label: '流程图'
     },
     {
+      type: '2',
+      label: '架构图'
+    },
+    {
       type: '3',
-      label: 'DAG 图'
+      label: '顺序图'
     },
     {
       type: '4',
-      label: 'ER 图'
+      label: 'UML'
+    },
+    {
+      type: '5',
+      label: '原型图'
     }
   ];
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -474,18 +478,18 @@ const InputTab = ({
         setValue('image', data.file.url);
       }
     },
-    errorToast: t('common.avatar.Select Failed')
+    errorToast: t('common.file.Upload failed')
   });
   const { mutate: createDescription, isLoading: isRequest } = useRequest({
     mutationFn: ({ image, type }) => {
-      return createImageDescription(image, type);
+      return createImageDescription({ image, type });
     },
-    onSuccess(data: { description: string }) {
+    onSuccess(data: { response: string }) {
       if (data) {
-        setValue('q', data.description);
+        setValue('q', data.response);
       }
     },
-    errorToast: t('common.avatar.Select Failed')
+    errorToast: t('common.Request Error')
   });
 
   return (
@@ -532,6 +536,7 @@ const InputTab = ({
               placeholder={t('core.dataset.data.Data Content Placeholder', { maxToken })}
               maxLength={maxToken}
               h={'100%'}
+              rows={12}
               bg={'myWhite.400'}
               {...register(`q`, {
                 required: true
@@ -570,7 +575,7 @@ const InputTab = ({
                     }
                   : {})}
               >
-                {imageItem.label || '图片类型'}
+                {imageItem?.label || '图片类型'}
               </MenuButton>
 
               <MenuList
@@ -590,6 +595,7 @@ const InputTab = ({
                     {...menuItemStyles}
                     onClick={() => {
                       setImageItem(item);
+                      createDescription({ image: imageUrl, type: item.type });
                     }}
                     whiteSpace={'pre-wrap'}
                   >
@@ -598,16 +604,6 @@ const InputTab = ({
                 ))}
               </MenuList>
             </Menu>
-            <Button
-              mt={4}
-              ml={4}
-              colorScheme="whitePrimary"
-              onClick={() => {
-                createDescription(imageUrl, imageItem.type);
-              }}
-            >
-              生成描述
-            </Button>
           </Box>
         )}
         {inputType === InputTypeEnum.a && (

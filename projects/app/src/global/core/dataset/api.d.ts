@@ -6,6 +6,7 @@ import {
 } from '@fastgpt/global/core/dataset/constants';
 import {
   DatasetDataIndexItemType,
+  ImageItemType,
   SearchDataResponseItemType
 } from '@fastgpt/global/core/dataset/type';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
@@ -68,4 +69,8 @@ export type SearchTestResponse = {
   usingReRank: boolean;
   similarity: number;
   usingQueryExtension: boolean;
+};
+
+export type ImageResponseType = ImageItemType & {
+  image: string;
 };

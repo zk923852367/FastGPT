@@ -4,14 +4,32 @@ import { jsonRes } from '@fastgpt/service/common/response';
 var Minio = require('minio');
 var fs = require('fs');
 
-console.log(Minio);
+function extractIPAndPort() {
+  let minioIp = '';
+  let minioPort = 9000;
+  let minioUrl = process.env.MINIO_URL;
+  if (minioUrl) {
+    const url = new URL(minioUrl);
+    minioIp = url.hostname;
+    minioPort = Number(url.port);
+  }
+  return {
+    minioIp,
+    minioPort,
+    minioUrl,
+    minioAccessKey: process.env.MINIO_ACCESS_KEY,
+    minioSecretKey: process.env.MINIO_SECRET_KEY
+  };
+}
+
+const minioServer = extractIPAndPort();
 
 const client = new Minio.Client({
-  endPoint: 'localhost',
-  port: 9000,
+  endPoint: minioServer.minioIp,
+  port: minioServer.minioPort,
   useSSL: false,
-  accessKey: 'XbG45IN9n0Gzgbp2agYN',
-  secretKey: 'X5RxzwUhLlMobJ47YLPLQ9JB4yWvE4cXpYrl90km'
+  accessKey: minioServer.minioAccessKey,
+  secretKey: minioServer.minioSecretKey
 });
 
 export const config = {
@@ -29,7 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 解析请求，获取文件
     const form = new formidable.IncomingForm();
     form.parse(req, async (err, fields, files) => {
-      const image: File | File[] = files.image;
+      const bucket = process.env.MINIO_BUCKET_NAME || 'default';
+      const image = files.image;
       const fileName = `${Date.now()}-${image.originalFilename}`; // 生成文件名
       const fileStream = fs.createReadStream(image.filepath);
       const metaData = {
@@ -43,10 +62,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         image.size,
         metaData
       );
-      await client.getObject('fastgpt', fileName);
+      await client.getObject(bucket, fileName);
       jsonRes(res, {
         data: {
-          url: `http://localhost:9000/fastgpt/${fileName}`
+          url: `${minioServer.minioUrl}/${bucket}/${fileName}`
         }
       });
     });

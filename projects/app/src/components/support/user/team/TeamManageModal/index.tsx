@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import MyModal from '@/components/MyModal';
+import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useTranslation } from 'next-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { DragHandleIcon } from '@chakra-ui/icons';
@@ -41,7 +41,7 @@ import { setToken, clearToken } from '@/web/support/user/auth';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { FormDataType, defaultForm } from './EditModal';
 import MyMenu from '@/components/MyMenu';
-import { useConfirm } from '@/web/common/hooks/useConfirm';
+import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useRouter } from 'next/router';
@@ -286,7 +286,7 @@ const TeamManageModal = ({ onClose }: { onClose: () => void }) => {
                       toast({
                         status: 'warning',
                         title: t('user.team.Over Max Member Tip', {
-                          max: teamPlanStatus.standardConstants.maxTeamMember
+                          max: teamPlanStatus?.standardConstants?.maxTeamMember
                         })
                       });
                     } else {

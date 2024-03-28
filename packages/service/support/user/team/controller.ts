@@ -119,6 +119,7 @@ export async function findMatchTeamMember(
     teamId: string;
     userId: string;
     name: string;
+    avatar: string;
     role: 'owner' | 'admin' | 'visitor';
     status: TeamMemberStatusEnum;
     createTime: Date;
@@ -147,6 +148,7 @@ export async function findMatchTeamMember(
           userId: item.userId,
           name: item.name,
           role: item.role,
+          avatar: item.avatar,
           status: TeamMemberStatusEnum.active,
           createTime: new Date(),
           defaultTeam: true

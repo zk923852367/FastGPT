@@ -32,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         name,
         userId: user?._id,
         username: name,
+        avatar: user?.avatar,
         status: TeamMemberStatusEnum.active,
         createTime: new Date(),
         defaultTeam: true
