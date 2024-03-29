@@ -147,7 +147,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           color={'primary.700'}
           cursor={'pointer'}
           _hover={{ textDecoration: 'underline' }}
-          onClick={() => setPageType('login')}
+          onClick={() => setPageType('passwordLogin')}
         >
           去登录
         </Box>

@@ -17,6 +17,7 @@ export type AdminMarkType = {
   collectionId?: string;
   q: string;
   a?: string;
+  image?: string;
 };
 
 const SelectMarkCollection = ({
@@ -146,7 +147,8 @@ const SelectMarkCollection = ({
           dataId={adminMarkData.dataId}
           defaultValue={{
             q: adminMarkData.q,
-            a: adminMarkData.a
+            a: adminMarkData.a,
+            image: adminMarkData.image
           }}
           onSuccess={(data) => {
             if (

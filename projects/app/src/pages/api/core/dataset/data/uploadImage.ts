@@ -4,6 +4,13 @@ import { jsonRes } from '@fastgpt/service/common/response';
 var Minio = require('minio');
 var fs = require('fs');
 
+interface CustomFile {
+  filepath: string;
+  originalFilename: string;
+  size: number;
+  mimetype: string;
+}
+
 function extractIPAndPort() {
   let minioIp = '';
   let minioPort = 9000;
@@ -48,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const form = new formidable.IncomingForm();
     form.parse(req, async (err, fields, files) => {
       const bucket = process.env.MINIO_BUCKET_NAME || 'default';
-      const image = files.image;
+      const image = files.image as CustomFile;
       const fileName = `${Date.now()}-${image.originalFilename}`; // 生成文件名
       const fileStream = fs.createReadStream(image.filepath);
       const metaData = {

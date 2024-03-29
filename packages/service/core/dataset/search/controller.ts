@@ -126,6 +126,7 @@ export async function searchDatasetData(props: SearchDatasetDataProps) {
           id: String(data._id),
           q: data.q,
           a: data.a,
+          image: data.image,
           chunkIndex: data.chunkIndex,
           datasetId: String(data.datasetId),
           collectionId: String(data.collectionId?._id),
@@ -208,6 +209,7 @@ export async function searchDatasetData(props: SearchDatasetDataProps) {
           sourceId: collection?.fileId || collection?.rawLink,
           q: item.q,
           a: item.a,
+          image: item.image,
           chunkIndex: item.chunkIndex,
           indexes: item.indexes,
           score: [{ type: SearchScoreTypeEnum.fullText, value: item.score, index }]

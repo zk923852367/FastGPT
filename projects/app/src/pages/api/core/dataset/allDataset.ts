@@ -27,6 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       name: item.name,
       intro: item.intro,
       type: item.type,
+      tmbName: item.tmbName,
       permission: item.permission,
       vectorModel: getVectorModel(item.vectorModel),
       canWrite: String(item.tmbId) === tmbId,

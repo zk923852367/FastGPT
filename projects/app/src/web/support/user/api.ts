@@ -39,14 +39,7 @@ export const postRegister = ({
     password: hashStr(password)
   });
 
-export const postFindPassword = ({
-  username,
-  password
-}: {
-  username: string;
-  code: string;
-  password: string;
-}) =>
+export const postFindPassword = ({ username, password }: { username: string; password: string }) =>
   POST<ResLogin>(`/support/user/account/password/updateByCode`, {
     username,
     password: hashStr(password)

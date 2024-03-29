@@ -79,7 +79,7 @@ const InputDataModal = ({
 }: {
   collectionId: string;
   dataId?: string;
-  defaultValue?: { q: string; a?: string; image: string };
+  defaultValue?: { q: string; a?: string; image?: string };
   onClose: () => void;
   onSuccess: (data: InputDataType & { dataId: string }) => void;
   onDelete?: () => void;

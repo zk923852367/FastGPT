@@ -1,4 +1,4 @@
-import ImageTool from '@editorjs/image';
+const ImageTool = require('@editorjs/image');
 
 export const EDITOR_JS_TOOLS = {
   image: {
