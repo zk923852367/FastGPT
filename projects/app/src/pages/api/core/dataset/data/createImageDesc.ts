@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       image: string;
       type: string;
     };
-    const response = await fetch(`${process.env.VL_URL}/api/image/summary`, {
+    const response = await fetch(`${process.env.LLM_URL}/api/image/summary`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

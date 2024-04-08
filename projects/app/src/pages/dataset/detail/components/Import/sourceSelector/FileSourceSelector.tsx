@@ -37,6 +37,11 @@ const FileModeSelector = ({ onClose }: { onClose: () => void }) => {
               title: t('core.dataset.import.Custom text'),
               desc: t('core.dataset.import.Custom text desc'),
               value: ImportDataSourceEnum.fileCustom
+            },
+            {
+              title: t('core.dataset.import.Doc text'),
+              desc: t('core.dataset.import.Doc text desc'),
+              value: ImportDataSourceEnum.fileCustom
             }
           ]}
           value={value}

@@ -455,6 +455,22 @@ const CollectionCard = () => {
                             source: ImportDataSourceEnum.tableLocal
                           }
                         })
+                    },
+                    {
+                      label: (
+                        <Flex>
+                          <MyIcon name={'core/dataset/tableCollection'} mr={2} w={'20px'} />
+                          {t('core.dataset.Excel collection')}
+                        </Flex>
+                      ),
+                      onClick: () =>
+                        router.replace({
+                          query: {
+                            ...router.query,
+                            currentTab: TabEnum.import,
+                            source: ImportDataSourceEnum.excelLocal
+                          }
+                        })
                     }
                   ]}
                 />

@@ -13,13 +13,15 @@ const FileLocal = dynamic(() => import('./diffSource/FileLocal'));
 const FileLink = dynamic(() => import('./diffSource/FileLink'));
 const FileCustomText = dynamic(() => import('./diffSource/FileCustomText'));
 const TableLocal = dynamic(() => import('./diffSource/TableLocal'));
+const ExcelLocal = dynamic(() => import('./diffSource/ExcelLocal'));
 
 export enum ImportDataSourceEnum {
   fileLocal = 'fileLocal',
   fileLink = 'fileLink',
   fileCustom = 'fileCustom',
 
-  tableLocal = 'tableLocal'
+  tableLocal = 'tableLocal',
+  excelLocal = 'excelLocal'
 }
 
 const ImportDataset = () => {
@@ -75,6 +77,11 @@ const ImportDataset = () => {
       {
         title: t('core.dataset.import.Upload data')
       }
+    ],
+    [ImportDataSourceEnum.excelLocal]: [
+      {
+        title: t('core.dataset.import.Select file')
+      }
     ]
   };
   const steps = modeSteps[source];
@@ -89,6 +96,7 @@ const ImportDataset = () => {
     if (source === ImportDataSourceEnum.fileLink) return FileLink;
     if (source === ImportDataSourceEnum.fileCustom) return FileCustomText;
     if (source === ImportDataSourceEnum.tableLocal) return TableLocal;
+    if (source === ImportDataSourceEnum.excelLocal) return ExcelLocal;
   }, [source]);
 
   return ImportComponent ? (

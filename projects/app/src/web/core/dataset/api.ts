@@ -33,7 +33,10 @@ import {
   DatasetCollectionSyncResultEnum,
   DatasetTypeEnum
 } from '@fastgpt/global/core/dataset/constants';
-import type { DatasetDataItemType } from '@fastgpt/global/core/dataset/type';
+import type {
+  DatasetDataItemType,
+  ExcelUploadRequestType
+} from '@fastgpt/global/core/dataset/type';
 import type { DatasetCollectionsListItemType } from '@/global/core/dataset/type.d';
 import { PagingData } from '@/types';
 
@@ -86,6 +89,12 @@ export const delDatasetCollectionById = (params: { id: string }) =>
 export const postLinkCollectionSync = (collectionId: string) =>
   POST<`${DatasetCollectionSyncResultEnum}`>(`/core/dataset/collection/sync/link`, {
     collectionId
+  });
+export const postExcelCollection = (data: FormData) =>
+  POST<string>(`/core/dataset/collection/readExcel`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
 
 /* =============================== data ==================================== */

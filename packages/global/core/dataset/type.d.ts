@@ -187,3 +187,8 @@ export type ImageItemType = {
   type: string;
   label?: string;
 };
+
+export type ExcelUploadRequestType<FormData> = {
+  file: File;
+  datasetId: string;
+};
