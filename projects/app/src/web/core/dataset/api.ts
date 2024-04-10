@@ -90,8 +90,22 @@ export const postLinkCollectionSync = (collectionId: string) =>
   POST<`${DatasetCollectionSyncResultEnum}`>(`/core/dataset/collection/sync/link`, {
     collectionId
   });
+export const uploadImage = (data: FormData) =>
+  POST<{ url: string }>(`/core/dataset/data/uploadImage`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+export const deletUploadImage = (data: { image: string }) =>
+  POST<{ url: string }>(`/core/dataset/data/delImage`, data);
 export const postExcelCollection = (data: FormData) =>
-  POST<string>(`/core/dataset/collection/readExcel`, data, {
+  POST<{ insertLen: number }>(`/core/dataset/collection/readExcel`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+export const postWordCollection = (data: FormData) =>
+  POST<{ insertLen: number }>(`/core/dataset/collection/readWord`, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

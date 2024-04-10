@@ -12,7 +12,8 @@ import {
   MenuList,
   MenuItem,
   useDisclosure,
-  MenuItemProps
+  MenuItemProps,
+  CloseButton
 } from '@chakra-ui/react';
 import {
   UseFormRegister,
@@ -27,7 +28,8 @@ import {
   delOneDatasetDataById,
   getDatasetCollectionById,
   getDatasetDataItemById,
-  createImageDescription
+  createImageDescription,
+  deletUploadImage
 } from '@/web/core/dataset/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import MyIcon from '@fastgpt/web/components/common/Icon';
@@ -50,8 +52,9 @@ import MyBox from '@/components/common/MyBox';
 import { getErrText } from '@fastgpt/global/common/error/utils';
 import RowTabs from '@fastgpt/web/components/common/Tabs/RowTabs';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
+import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
-import { uploadImage } from '@/web/common/file/controller';
+import { uploadImage } from '@/web/core/dataset/api';
 
 export type InputDataType = {
   q: string;
@@ -417,6 +420,7 @@ const InputTab = ({
 }) => {
   const { t } = useTranslation();
   const { isPc } = useSystemStore();
+  const { datasetDetail } = useDatasetStore();
   const [imageUrl, setImageUrl] = useState('');
   const [imageItem, setImageItem] = useState<ImageItemType>();
   const [inputType, setInputType] = useState(InputTypeEnum.q);
@@ -465,17 +469,21 @@ const InputTab = ({
     fileType: '.jpg,.png',
     multiple: false
   });
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
 
   const { mutate: onSelectFile, isLoading: isSelecting } = useRequest({
     mutationFn: (e: File[]) => {
       const file = e[0];
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('dataset_id', datasetDetail._id);
       if (!file) return Promise.resolve(null);
-      return uploadImage(file);
+      return uploadImage(formData);
     },
-    onSuccess(data: { file: { url: string } }) {
+    onSuccess(data: { url: string }) {
       if (data) {
-        setImageUrl(data.file.url);
-        setValue('image', data.file.url);
+        setImageUrl(data.url);
+        setValue('image', data.url);
       }
     },
     errorToast: t('common.file.Upload failed')
@@ -487,6 +495,19 @@ const InputTab = ({
     onSuccess(data: { response: string }) {
       if (data) {
         setValue('q', data.response);
+      }
+    },
+    errorToast: t('common.Request Error')
+  });
+
+  const { mutate: deletImage, isLoading: isDeleting } = useRequest({
+    mutationFn: ({ image }) => {
+      return deletUploadImage({ image });
+    },
+    onSuccess(data: {}) {
+      if (data) {
+        setImageUrl('');
+        setValue('image', '');
       }
     },
     errorToast: t('common.Request Error')
@@ -531,7 +552,21 @@ const InputTab = ({
       <Box mt={3} flex={'1 0 0'}>
         {inputType === InputTypeEnum.q && (
           <Box>
-            <Image src={imageUrl}></Image>
+            {/* <Box position="relative" onMouseEnter={() => setShowDeleteButton(true)} onMouseLeave={() => setShowDeleteButton(false)}> */}
+            <Image src={imageUrl} alt="Image" />
+
+            {/* {showDeleteButton && (
+                <CloseButton
+                  aria-label="Delete"
+                  position="absolute"
+                  bottom="0"
+                  right="0"
+                  onClick={() => {
+                    deletImage({image: imageUrl})
+                  }}
+                />
+              )}
+            </Box> */}
             <Textarea
               placeholder={t('core.dataset.data.Data Content Placeholder', { maxToken })}
               maxLength={maxToken}

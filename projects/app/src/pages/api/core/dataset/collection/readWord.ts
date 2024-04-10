@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           throw new Error('Error parsing form data');
         }
         try {
-          // 存文件到minio
+          // 文件存储到minio
           const bucket = process.env.MINIO_BUCKET_NAME || 'default';
           const fileName = await storeFile(
             bucket,
@@ -36,22 +36,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             files.file.filepath,
             files.file.mimetype
           );
-          // 构建 FormData 对象，用于传递文件给第三方服务
-          const formData = new FormData();
-          formData.append('file', fs.createReadStream(files.file.filepath), {
-            filename: fileName
-          });
-          formData.append('dataset_id', fields.dataset_id);
           // 使用 Axios 发送文件给第三方服务
-          const response = await axios.post(
-            `${process.env.LLM_URL}/api/excel/process_excel`,
-            formData,
-            {
-              headers: {
-                formData: formData.getHeaders()
-              }
-            }
-          );
+          const response = await axios.post(`${process.env.LLM_URL}/api/dataset/pushData`, {
+            file_name: fileName,
+            dataset_id: fields.dataset_id,
+            bucket_name: bucket
+          });
           const { success, message, data } = response.data;
           // 返回第三方服务的响应给客户端
           if (success) {

@@ -12,6 +12,7 @@ import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 const FileLocal = dynamic(() => import('./diffSource/FileLocal'));
 const FileLink = dynamic(() => import('./diffSource/FileLink'));
 const FileCustomText = dynamic(() => import('./diffSource/FileCustomText'));
+const FileWord = dynamic(() => import('./diffSource/FileWord'));
 const TableLocal = dynamic(() => import('./diffSource/TableLocal'));
 const ExcelLocal = dynamic(() => import('./diffSource/ExcelLocal'));
 
@@ -19,7 +20,7 @@ export enum ImportDataSourceEnum {
   fileLocal = 'fileLocal',
   fileLink = 'fileLink',
   fileCustom = 'fileCustom',
-
+  fileWord = 'fileWord',
   tableLocal = 'tableLocal',
   excelLocal = 'excelLocal'
 }
@@ -54,6 +55,11 @@ const ImportDataset = () => {
       },
       {
         title: t('core.dataset.import.Upload data')
+      }
+    ],
+    [ImportDataSourceEnum.fileWord]: [
+      {
+        title: t('core.dataset.import.Select file')
       }
     ],
     [ImportDataSourceEnum.fileCustom]: [
@@ -95,6 +101,7 @@ const ImportDataset = () => {
     if (source === ImportDataSourceEnum.fileLocal) return FileLocal;
     if (source === ImportDataSourceEnum.fileLink) return FileLink;
     if (source === ImportDataSourceEnum.fileCustom) return FileCustomText;
+    if (source === ImportDataSourceEnum.fileWord) return FileWord;
     if (source === ImportDataSourceEnum.tableLocal) return TableLocal;
     if (source === ImportDataSourceEnum.excelLocal) return ExcelLocal;
   }, [source]);

@@ -25,7 +25,7 @@ const Upload = dynamic(() => import('../commonProgress/Upload'));
 
 type FileItemType = ImportSourceItemType & { file: File };
 const fileType = '.xlsx';
-const maxSelectFileCount = 1000;
+const maxSelectFileCount = 1;
 
 const FileLocal = ({ activeStep, goToNext }: ImportDataComponentProps) => {
   return <>{activeStep === 0 && <SelectFile goToNext={goToNext} />}</>;
@@ -47,7 +47,6 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
   // @ts-ignore
   const [selectFiles, setSelectFiles] = useState<FileItemType[]>(sources);
   const successFiles = useMemo(() => selectFiles.filter((item) => !item.errorMsg), [selectFiles]);
-  console.log(11111);
   useEffect(() => {
     setSources(successFiles);
   }, [successFiles]);
@@ -58,20 +57,19 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
         const { file, folderPath } = selectFile;
         const formData = new FormData();
         formData.append('file', file);
-        // formData.append('datasetId', datasetDetail._id)
-        formData.append('dataset_id', '660666111bd15382cf7c60b9');
+        formData.append('dataset_id', datasetDetail._id);
         const data = await postExcelCollection(formData);
         const item: FileItemType = {
           id: getNanoid(32),
           file,
-          rawText: data,
+          rawText: '',
           chunks: [],
           chunkChars: 0,
           sourceFolderPath: folderPath,
           sourceName: file.name,
           sourceSize: formatFileSize(file.size),
           icon: getFileIcon(file.name),
-          errorMsg: ''
+          errorMsg: data.insertLen === 0 ? t('common.file.Empty file tip') : ''
         };
 
         setSelectFiles((state) => {

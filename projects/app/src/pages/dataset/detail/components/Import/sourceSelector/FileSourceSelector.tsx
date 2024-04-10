@@ -41,7 +41,7 @@ const FileModeSelector = ({ onClose }: { onClose: () => void }) => {
             {
               title: t('core.dataset.import.Doc text'),
               desc: t('core.dataset.import.Doc text desc'),
-              value: ImportDataSourceEnum.fileCustom
+              value: ImportDataSourceEnum.fileWord
             }
           ]}
           value={value}
