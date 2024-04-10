@@ -164,7 +164,7 @@ const NodeCard = (props: Props) => {
             top={'-20px'}
             right={0}
             transform={'translateX(90%)'}
-            pl={'17px'}
+            pl={'20px'}
             pr={'10px'}
             pb={'20px'}
             pt={'20px'}
@@ -261,7 +261,7 @@ const NodeCard = (props: Props) => {
       }}
     >
       {Header}
-      {children}
+      <Box className="nowheel">{children}</Box>
       {RenderModal}
     </Box>
   );

@@ -10,7 +10,7 @@ import { connectToDatabase } from '@/service/mongo';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { avatar, timezone, openaiAccount } = req.body as UserUpdateParams;
+    const { avatar, timezone, openaiAccount, lafAccount } = req.body as UserUpdateParams;
 
     const { userId } = await authCert({ req, authToken: true });
 
@@ -42,7 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       {
         ...(avatar && { avatar }),
         ...(timezone && { timezone }),
-        openaiAccount: openaiAccount?.key ? openaiAccount : null
+        openaiAccount: openaiAccount?.key ? openaiAccount : null,
+        lafAccount: lafAccount?.token ? lafAccount : null
       }
     );
 

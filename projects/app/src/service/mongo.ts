@@ -12,8 +12,6 @@ import { initGlobal } from './common/system';
 import { startMongoWatch } from './common/system/volumnMongoWatch';
 import { startTrainingQueue } from './core/dataset/training/utils';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
-import { clearDirFiles } from '@fastgpt/service/common/file/utils';
-import { tmpFileDirPath } from '@fastgpt/service/common/file/constants';
 
 /**
  * connect MongoDB and init data
@@ -35,9 +33,6 @@ export function connectToDatabase(): Promise<void> {
 
       // start queue
       startTrainingQueue(true);
-
-      // clear tmp files
-      clearDirFiles(tmpFileDirPath);
     }
   });
 }

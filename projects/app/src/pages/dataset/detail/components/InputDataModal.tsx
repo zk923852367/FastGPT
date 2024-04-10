@@ -282,7 +282,7 @@ const InputDataModal = ({
                 return openConfirm(onDeleteData)();
               }
               if (e === TabEnum.doc) {
-                return window.open(getDocPath('/docs/use-cases/datasetengine'), '_blank');
+                return window.open(getDocPath('/docs/course/dataset_engine'), '_blank');
               }
               setCurrentTab(e);
             }}
