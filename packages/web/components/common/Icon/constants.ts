@@ -95,7 +95,6 @@ export const iconPaths = {
   'core/chat/setTopLight': () => import('./icons/core/chat/setTopLight.svg'),
   'core/chat/speaking': () => import('./icons/core/chat/speaking.svg'),
   'core/chat/stopSpeech': () => import('./icons/core/chat/stopSpeech.svg'),
-  'core/chat/stopSpeechFill': () => import('./icons/core/chat/stopSpeechFill.svg'),
   'core/chat/setting': () => import('./icons/core/chat/setting.svg'),
   'core/dataset/commonDataset': () => import('./icons/core/dataset/commonDataset.svg'),
   'core/dataset/datasetFill': () => import('./icons/core/dataset/datasetFill.svg'),
