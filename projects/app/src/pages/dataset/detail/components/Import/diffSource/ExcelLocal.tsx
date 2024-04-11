@@ -15,15 +15,9 @@ import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useRouter } from 'next/router';
 import { TabEnum } from '../../../index';
-
-import dynamic from 'next/dynamic';
-import { fileDownload } from '@/web/common/file/utils';
 import { postExcelCollection } from '@/web/core/dataset/api';
+import { RenderUploadFiles } from '../components/RenderFiles';
 
-const PreviewData = dynamic(() => import('../commonProgress/PreviewData'));
-const Upload = dynamic(() => import('../commonProgress/Upload'));
-
-type FileItemType = ImportSourceItemType & { file: File };
 const fileType = '.xlsx';
 const maxSelectFileCount = 1;
 
@@ -59,13 +53,16 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
         formData.append('file', file);
         formData.append('dataset_id', datasetDetail._id);
         const data = await postExcelCollection(formData);
-        const item: FileItemType = {
+        const item: ImportSourceItemType = {
           id: getNanoid(32),
           file,
           rawText: '',
-          chunks: [],
-          chunkChars: 0,
-          sourceFolderPath: folderPath,
+          createStatus: 'finish',
+          metadata: {
+            'Content-Type': file.type
+          },
+          uploadedFileRate: 100,
+          dbFileId: folderPath,
           sourceName: file.name,
           sourceSize: formatFileSize(file.size),
           icon: getFileIcon(file.name),
@@ -108,40 +105,7 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
       </Box> */}
 
       {/* render files */}
-      <Flex my={4} flexWrap={'wrap'} gap={5} alignItems={'center'}>
-        {selectFiles.map((item) => (
-          <Flex
-            key={item.id}
-            alignItems={'center'}
-            px={4}
-            py={2}
-            borderRadius={'md'}
-            bg={'myGray.100'}
-          >
-            <MyIcon name={item.icon as any} w={'16px'} />
-            <Box ml={1} mr={3}>
-              {item.sourceName}
-            </Box>
-            <Box mr={1} fontSize={'xs'} color={'myGray.500'}>
-              {item.sourceSize}
-            </Box>
-            {item.errorMsg && (
-              <MyTooltip label={item.errorMsg}>
-                <MyIcon name={'common/errorFill'} w={'14px'} mr={3} />
-              </MyTooltip>
-            )}
-            <MyIcon
-              name={'common/closeLight'}
-              w={'14px'}
-              color={'myGray.500'}
-              cursor={'pointer'}
-              onClick={() => {
-                setSelectFiles((state) => state.filter((file) => file.id !== item.id));
-              }}
-            />
-          </Flex>
-        ))}
-      </Flex>
+      <RenderUploadFiles files={selectFiles} setFiles={setSelectFiles} />
 
       <Box textAlign={'right'}>
         <Button

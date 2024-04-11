@@ -42,6 +42,7 @@ const defaultFeConfigs: FastGPTFeConfigsType = {
   openAPIDocUrl: '',
   systemTitle: 'FastGPT',
   concatMd: '',
+  lafEnv: '',
   show_register: true,
   limit: {
     exportDatasetLimitMinutes: 0,

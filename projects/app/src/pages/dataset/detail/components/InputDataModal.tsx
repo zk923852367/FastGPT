@@ -553,7 +553,7 @@ const InputTab = ({
         {inputType === InputTypeEnum.q && (
           <Box>
             {/* <Box position="relative" onMouseEnter={() => setShowDeleteButton(true)} onMouseLeave={() => setShowDeleteButton(false)}> */}
-            <Image src={imageUrl} alt="Image" />
+            {imageUrl && <Image src={imageUrl} alt="Image" />}
 
             {/* {showDeleteButton && (
                 <CloseButton
@@ -584,6 +584,7 @@ const InputTab = ({
               上传图片
             </Button>
             <Menu
+              
               autoSelect={false}
               isOpen={isOpen}
               onOpen={onOpen}
@@ -627,6 +628,7 @@ const InputTab = ({
                 {imageMaps.map((item) => (
                   <MenuItem
                     key={item.type}
+                    isDisabled={isSelecting}
                     {...menuItemStyles}
                     onClick={() => {
                       setImageItem(item);

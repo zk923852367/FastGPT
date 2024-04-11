@@ -9,11 +9,7 @@ import { formatFileSize } from '@fastgpt/global/common/file/tools';
 import { useTranslation } from 'next-i18next';
 import { getNanoid } from '@fastgpt/global/common/string/tools';
 import { useRequest } from '@fastgpt/web/hooks/useRequest';
-import { readFileRawContent } from '@fastgpt/web/common/file/read';
-import { getUploadBase64ImgController } from '@/web/common/file/controller';
-import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
 import MyTooltip from '@/components/MyTooltip';
-import type { PreviewRawTextProps } from '../components/PreviewRawText';
 import { useImportStore } from '../Provider';
 import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
@@ -21,15 +17,19 @@ import { useRouter } from 'next/router';
 import { TabEnum } from '../../../index';
 import dynamic from 'next/dynamic';
 import Loading from '@fastgpt/web/components/common/MyLoading';
+import { RenderUploadFiles } from '../components/RenderFiles';
 import { postWordCollection } from '@/web/core/dataset/api';
 
 const DataProcess = dynamic(() => import('../commonProgress/DataProcess'), {
   loading: () => <Loading fixed={false} />
 });
 const Upload = dynamic(() => import('../commonProgress/Upload'));
-const PreviewRawText = dynamic(() => import('../components/PreviewRawText'));
 
-type FileItemType = ImportSourceItemType & { file: File };
+export type PreviewRawTextProps = {
+  icon: string;
+  title: string;
+  rawText: string;
+};
 const fileType = '.docx';
 const maxSelectFileCount = 1;
 
@@ -38,7 +38,7 @@ const FileLocal = ({ activeStep, goToNext }: ImportDataComponentProps) => {
     <>
       {activeStep === 0 && <SelectFile goToNext={goToNext} />}
       {activeStep === 1 && <DataProcess showPreviewChunks goToNext={goToNext} />}
-      {activeStep === 2 && <Upload showPreviewChunks />}
+      {activeStep === 2 && <Upload />}
     </>
   );
 };
@@ -52,10 +52,8 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
   const { datasetDetail } = useDatasetStore();
   const { sources, setSources } = useImportStore();
   // @ts-ignore
-  const [selectFiles, setSelectFiles] = useState<FileItemType[]>(sources);
+  const [selectFiles, setSelectFiles] = useState<ImportSourceItemType[]>(sources);
   const successFiles = useMemo(() => selectFiles.filter((item) => !item.errorMsg), [selectFiles]);
-
-  const [previewRaw, setPreviewRaw] = useState<PreviewRawTextProps>();
 
   useEffect(() => {
     setSources(successFiles);
@@ -71,13 +69,16 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
           formData.append('dataset_id', datasetDetail._id);
           const data = await postWordCollection(formData);
 
-          const item: FileItemType = {
+          const item: ImportSourceItemType = {
             id: getNanoid(32),
             file,
             rawText: '',
-            chunks: [],
-            chunkChars: 0,
-            sourceFolderPath: folderPath,
+            createStatus: 'finish',
+            metadata: {
+              'Content-Type': file.type
+            },
+            uploadedFileRate: 100,
+            dbFileId: folderPath,
             sourceName: file.name,
             sourceSize: formatFileSize(file.size),
             icon: getFileIcon(file.name),
@@ -104,53 +105,7 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
       />
 
       {/* render files */}
-      <Flex my={4} flexWrap={'wrap'} gap={5} alignItems={'center'}>
-        {selectFiles.map((item) => (
-          <MyTooltip key={item.id} label={t('core.dataset.import.Preview raw text')}>
-            <Flex
-              alignItems={'center'}
-              px={4}
-              py={3}
-              borderRadius={'md'}
-              bg={'myGray.100'}
-              cursor={'pointer'}
-              onClick={() =>
-                setPreviewRaw({
-                  icon: item.icon,
-                  title: item.sourceName,
-                  rawText: item.rawText.slice(0, 10000)
-                })
-              }
-            >
-              <MyIcon name={item.icon as any} w={'16px'} />
-              <Box ml={1} mr={3}>
-                {item.sourceName}
-              </Box>
-              <Box mr={1} fontSize={'xs'} color={'myGray.500'}>
-                {item.sourceSize}
-                {item.rawText.length > 0 && (
-                  <>,{t('common.Number of words', { amount: item.rawText.length })}</>
-                )}
-              </Box>
-              {item.errorMsg && (
-                <MyTooltip label={item.errorMsg}>
-                  <MyIcon name={'common/errorFill'} w={'14px'} mr={3} />
-                </MyTooltip>
-              )}
-              <MyIcon
-                name={'common/closeLight'}
-                w={'14px'}
-                color={'myGray.500'}
-                cursor={'pointer'}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectFiles((state) => state.filter((file) => file.id !== item.id));
-                }}
-              />
-            </Flex>
-          </MyTooltip>
-        ))}
-      </Flex>
+      <RenderUploadFiles files={selectFiles} setFiles={setSelectFiles} />
 
       <Box textAlign={'right'}>
         <Button
@@ -170,8 +125,6 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
           {t('common.Exit')}
         </Button>
       </Box>
-
-      {previewRaw && <PreviewRawText {...previewRaw} onClose={() => setPreviewRaw(undefined)} />}
     </Box>
   );
 });
