@@ -60,10 +60,9 @@ export async function createFileUrl(
   filepath: string,
   mimetype: string
 ) {
-  const newFileName = dirName + '/' + `${Date.now()}-${fileName}`;
   return new Promise(async (resolve, reject) => {
     try {
-      await storeFile(bucketName, dirName, fileName, filepath, mimetype);
+      const newFileName = await storeFile(bucketName, dirName, fileName, filepath, mimetype);
       const fileUrl = `${minioServer.minioUrl}/${bucketName}/${newFileName}`;
       resolve(fileUrl);
     } catch (error) {

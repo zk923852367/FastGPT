@@ -418,6 +418,7 @@ const InputTab = ({
   setValue: UseFormSetValue<InputDataType>;
   getValue: UseFormWatch<InputDataType>;
 }) => {
+  const { toast } = useToast();
   const { t } = useTranslation();
   const { isPc } = useSystemStore();
   const { datasetDetail } = useDatasetStore();
@@ -631,6 +632,13 @@ const InputTab = ({
                     isDisabled={isSelecting}
                     {...menuItemStyles}
                     onClick={() => {
+                      if (!imageUrl) {
+                        toast({
+                          title: t('dataset.data.Upload Image'),
+                          status: 'warning'
+                        })
+                        return;
+                      }
                       setImageItem(item);
                       createDescription({ image: imageUrl, type: item.type });
                     }}
