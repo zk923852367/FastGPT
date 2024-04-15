@@ -38,6 +38,7 @@ import MyTooltip from '@/components/MyTooltip';
 import { CheckCircleIcon, ChevronDownIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
+import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { useRequest } from '@/web/common/hooks/useRequest';
 import { countPromptTokens } from '@fastgpt/global/common/string/tiktoken';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
@@ -55,6 +56,7 @@ import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { uploadImage } from '@/web/core/dataset/api';
+import { MINIO_BASE_URL } from '@/middleware';
 
 export type InputDataType = {
   q: string;
@@ -420,6 +422,7 @@ const InputTab = ({
 }) => {
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { Loading } = useLoading();
   const { isPc } = useSystemStore();
   const { datasetDetail } = useDatasetStore();
   const [imageUrl, setImageUrl] = useState('');
@@ -440,7 +443,13 @@ const InputTab = ({
   };
   const url = getValue('image');
   useEffect(() => {
-    setImageUrl(url);
+    let imageUrl = ''
+    if (url) {
+      const imagePath = new URL(url)
+      imageUrl = `${MINIO_BASE_URL}/${imagePath.pathname}`
+    }
+    
+    setImageUrl(imageUrl);
   }, [url]);
 
   const imageMaps: ImageItemType[] = [
@@ -483,7 +492,8 @@ const InputTab = ({
     },
     onSuccess(data: { url: string }) {
       if (data) {
-        setImageUrl(data.url);
+        const url = new URL(data.url)
+        setImageUrl(`${MINIO_BASE_URL}/${url.pathname}`);
         setValue('image', data.url);
       }
     },
@@ -640,7 +650,7 @@ const InputTab = ({
                         return;
                       }
                       setImageItem(item);
-                      createDescription({ image: imageUrl, type: item.type });
+                      createDescription({ image: getValue('image'), type: item.type });
                     }}
                     whiteSpace={'pre-wrap'}
                   >
@@ -665,6 +675,9 @@ const InputTab = ({
         )}
       </Box>
       <File onSelect={onSelectFile} />
+      <Loading fixed={false} loading={isRequest} text={t('file.Parse', {
+        name: t('common.Image')
+      })} />
     </Flex>
   );
 };
