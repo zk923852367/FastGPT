@@ -97,11 +97,7 @@ const MyApps = () => {
                 boxShadow: '1.5'
               }}
               onClick={() => {
-                if (userInfo?.team.canWrite) {
-                  router.push(`/app/detail?appId=${app._id}`);
-                } else {
-                  router.push(`/chat?appId=${app._id}`);
-                }
+                router.push(`/chat?appId=${app._id}`);
               }}
             >
               <Flex alignItems={'center'} h={'38px'}>

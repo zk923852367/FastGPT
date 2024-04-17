@@ -40,14 +40,12 @@ export async function authDatasetByTmbId({
     const isOwner =
       role !== TeamMemberRoleEnum.visitor &&
       (String(dataset.tmbId) === tmbId || role === TeamMemberRoleEnum.owner);
-    const canWrite =
-      isOwner ||
-      (role !== TeamMemberRoleEnum.visitor && dataset.permission === PermissionTypeEnum.public);
-    if (per === 'r') {
-      if (!isOwner && dataset.permission !== PermissionTypeEnum.public) {
-        return Promise.reject(DatasetErrEnum.unAuthDataset);
-      }
-    }
+    const canWrite = isOwner || role !== TeamMemberRoleEnum.visitor;
+    // if (per === 'r') {
+    //   if (!isOwner && dataset.permission !== PermissionTypeEnum.public) {
+    //     return Promise.reject(DatasetErrEnum.unAuthDataset);
+    //   }
+    // }
     if (per === 'w' && !canWrite) {
       return Promise.reject(DatasetErrEnum.unAuthDataset);
     }

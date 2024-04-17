@@ -297,7 +297,7 @@ const InputDataModal = ({
             )}
             {currentTab === TabEnum.index && <> {t('dataset.data.Index Edit')}</>}
           </Box>
-          <Box flex={1} px={5} overflow={'auto'}>
+          <Box flex={1} overflow={'auto'}>
             {currentTab === TabEnum.content && (
               <InputTab
                 maxToken={maxToken}
@@ -446,7 +446,7 @@ const InputTab = ({
     let imageUrl = ''
     if (url) {
       const imagePath = new URL(url)
-      imageUrl = `${MINIO_BASE_URL}/${imagePath.pathname}`
+      imageUrl = `${MINIO_BASE_URL}${imagePath.pathname}`
     }
     
     setImageUrl(imageUrl);
@@ -493,7 +493,7 @@ const InputTab = ({
     onSuccess(data: { url: string }) {
       if (data) {
         const url = new URL(data.url)
-        setImageUrl(`${MINIO_BASE_URL}/${url.pathname}`);
+        setImageUrl(`${MINIO_BASE_URL}${url.pathname}`);
         setValue('image', data.url);
       }
     },
@@ -591,11 +591,10 @@ const InputTab = ({
             {/* <ImageUpload onSuccess={(data: { file: { url: React.SetStateAction<string>; }; }) => {
               setImageUrl(data.file.url)
             }} /> */}
-            <Button mt={4} colorScheme="whitePrimary" onClick={onOpenSelectFile}>
+            <Button size={['sm', 'md']} mt={4} ml={4} colorScheme="whitePrimary" onClick={onOpenSelectFile}>
               上传图片
             </Button>
             <Menu
-              
               autoSelect={false}
               isOpen={isOpen}
               onOpen={onOpen}
@@ -609,6 +608,7 @@ const InputTab = ({
                 px={3}
                 mt={4}
                 ml={4}
+                size={['sm', 'md']}
                 rightIcon={<ChevronDownIcon />}
                 variant={'whitePrimary'}
                 textAlign={'left'}

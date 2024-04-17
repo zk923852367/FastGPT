@@ -29,6 +29,8 @@ import { ChatRoleEnum, ChatStatusEnum } from '@fastgpt/global/core/chat/constant
 import MyBox from '@/components/common/MyBox';
 import { MongoOutLink } from '@fastgpt/service/support/outLink/schema';
 import { OutLinkWithAppType } from '@fastgpt/global/support/outLink/type';
+import { addLog } from '@fastgpt/service/common/system/log';
+import { connectToDatabase } from '@/service/mongo';
 
 const OutLink = ({
   appName,
@@ -275,78 +277,78 @@ const OutLink = ({
       >
         {showHistory === '1'
           ? ((children: React.ReactNode) => {
-              return isPc ? (
-                <SideBar>{children}</SideBar>
-              ) : (
-                <Drawer
-                  isOpen={isOpenSlider}
-                  placement="left"
-                  autoFocus={false}
-                  size={'xs'}
-                  onClose={onCloseSlider}
-                >
-                  <DrawerOverlay backgroundColor={'rgba(255,255,255,0.5)'} />
-                  <DrawerContent maxWidth={'250px'} boxShadow={'2px 0 10px rgba(0,0,0,0.15)'}>
-                    {children}
-                  </DrawerContent>
-                </Drawer>
-              );
-            })(
-              <ChatHistorySlider
-                appName={chatData.app.name}
-                appAvatar={chatData.app.avatar}
-                confirmClearText={t('core.chat.Confirm to clear share chat history')}
-                activeChatId={chatId}
-                history={histories.map((item) => ({
-                  id: item.chatId,
-                  title: item.title,
-                  customTitle: item.customTitle,
-                  top: item.top
-                }))}
+            return isPc ? (
+              <SideBar>{children}</SideBar>
+            ) : (
+              <Drawer
+                isOpen={isOpenSlider}
+                placement="left"
+                autoFocus={false}
+                size={'xs'}
                 onClose={onCloseSlider}
-                onChangeChat={(chatId) => {
-                  router.replace({
-                    query: {
-                      ...router.query,
-                      chatId: chatId || ''
-                    }
-                  });
-                  if (!isPc) {
-                    onCloseSlider();
+              >
+                <DrawerOverlay backgroundColor={'rgba(255,255,255,0.5)'} />
+                <DrawerContent maxWidth={'250px'} boxShadow={'2px 0 10px rgba(0,0,0,0.15)'}>
+                  {children}
+                </DrawerContent>
+              </Drawer>
+            );
+          })(
+            <ChatHistorySlider
+              appName={chatData.app.name}
+              appAvatar={chatData.app.avatar}
+              confirmClearText={t('core.chat.Confirm to clear share chat history')}
+              activeChatId={chatId}
+              history={histories.map((item) => ({
+                id: item.chatId,
+                title: item.title,
+                customTitle: item.customTitle,
+                top: item.top
+              }))}
+              onClose={onCloseSlider}
+              onChangeChat={(chatId) => {
+                router.replace({
+                  query: {
+                    ...router.query,
+                    chatId: chatId || ''
                   }
-                }}
-                onDelHistory={({ chatId }) =>
-                  delOneHistory({ appId: chatData.appId, chatId, shareId, outLinkUid })
+                });
+                if (!isPc) {
+                  onCloseSlider();
                 }
-                onClearHistory={() => {
-                  clearHistories({ shareId, outLinkUid });
-                  router.replace({
-                    query: {
-                      ...router.query,
-                      chatId: ''
-                    }
-                  });
-                }}
-                onSetHistoryTop={(e) => {
-                  updateHistory({
-                    ...e,
-                    appId: chatData.appId,
-                    shareId,
-                    outLinkUid
-                  });
-                }}
-                onSetCustomTitle={async (e) => {
-                  updateHistory({
-                    appId: chatData.appId,
-                    chatId: e.chatId,
-                    title: e.title,
-                    customTitle: e.title,
-                    shareId,
-                    outLinkUid
-                  });
-                }}
-              />
-            )
+              }}
+              onDelHistory={({ chatId }) =>
+                delOneHistory({ appId: chatData.appId, chatId, shareId, outLinkUid })
+              }
+              onClearHistory={() => {
+                clearHistories({ shareId, outLinkUid });
+                router.replace({
+                  query: {
+                    ...router.query,
+                    chatId: ''
+                  }
+                });
+              }}
+              onSetHistoryTop={(e) => {
+                updateHistory({
+                  ...e,
+                  appId: chatData.appId,
+                  shareId,
+                  outLinkUid
+                });
+              }}
+              onSetCustomTitle={async (e) => {
+                updateHistory({
+                  appId: chatData.appId,
+                  chatId: e.chatId,
+                  title: e.title,
+                  customTitle: e.title,
+                  shareId,
+                  outLinkUid
+                });
+              }}
+            />
+          )
           : null}
 
         {/* chat container */}
@@ -375,7 +377,7 @@ const OutLink = ({
               userGuideModule={chatData.app?.userGuideModule}
               showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}
               feedbackType={'user'}
-              onUpdateVariable={(e) => {}}
+              onUpdateVariable={(e) => { }}
               onStartChat={startChat}
               onDelMessage={(e) =>
                 delOneHistoryItem({ ...e, appId: chatData.appId, chatId, shareId, outLinkUid })
@@ -397,6 +399,7 @@ export async function getServerSideProps(context: any) {
 
   const app = await (async () => {
     try {
+      await connectToDatabase();
       const app = (await MongoOutLink.findOne(
         {
           shareId
@@ -407,6 +410,7 @@ export async function getServerSideProps(context: any) {
         .lean()) as OutLinkWithAppType;
       return app;
     } catch (error) {
+      addLog.error('getServerSideProps', error);
       return undefined;
     }
   })();

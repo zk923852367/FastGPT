@@ -42,9 +42,9 @@ export const delLeaveTeam = (teamId: string) =>
   DELETE('/support/user/team/member/leave', { teamId });
 
 /* --------------- team tags ---------------- */
-export const getTeamsTags = () => GET<TeamTagSchema[]>(`/proApi/support/user/team/tag/list`);
+export const getTeamsTags = () => GET<TeamTagSchema[]>(`/support/user/team/tag/list`);
 export const loadTeamTagsByDomain = (domain: string) =>
-  GET<TeamTagItemType[]>(`/proApi/support/user/team/tag/async`, { domain });
+  GET<TeamTagItemType[]>(`/support/user/team/tag/async`, { domain });
 
 /* team limit */
 export const checkTeamExportDatasetLimit = (datasetId: string) =>

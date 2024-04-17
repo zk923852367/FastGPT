@@ -36,15 +36,13 @@ export async function authApp({
     const isOwner =
       role !== TeamMemberRoleEnum.visitor &&
       (String(app.tmbId) === tmbId || role === TeamMemberRoleEnum.owner);
-    const canWrite =
-      isOwner ||
-      (app.permission === PermissionTypeEnum.public && role !== TeamMemberRoleEnum.visitor);
+    const canWrite = isOwner || role !== TeamMemberRoleEnum.visitor;
 
-    if (per === 'r') {
-      if (!isOwner && app.permission !== PermissionTypeEnum.public) {
-        return Promise.reject(AppErrEnum.unAuthApp);
-      }
-    }
+    // if (per === 'r') {
+    //   if (!isOwner && app.permission !== PermissionTypeEnum.public) {
+    //     return Promise.reject(AppErrEnum.unAuthApp);
+    //   }
+    // }
     if (per === 'w' && !canWrite) {
       return Promise.reject(AppErrEnum.unAuthApp);
     }

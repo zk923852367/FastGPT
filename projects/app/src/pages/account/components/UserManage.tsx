@@ -109,7 +109,7 @@ const UserManage = () => {
             <Flex mt={5} px={3} alignItems={'center'}>
               <Box w={'40px'}>{t('user.Account')}</Box>
               <Input
-                w={['200px', '250px']}
+                w={['120px', '250px']}
                 size={'sm'}
                 value={username}
                 placeholder="搜索应用，回车确认"
@@ -132,7 +132,7 @@ const UserManage = () => {
               <Box w={'40px'}>{t('common.Status')}</Box>
               <Box flex={1}>
                 <MySelect
-                  w={['200px', '250px']}
+                  w={['120px', '250px']}
                   value={status}
                   list={statusOptions.map((item) => ({
                     value: item.value,
@@ -155,23 +155,26 @@ const UserManage = () => {
                 />
               </Box>
             </Flex>
-            <Box position={'absolute'} top={0} right="30px">
-              <Button
-                variant={'whitePrimary'}
-                leftIcon={<AddIcon fontSize={'10px'} />}
-                onClick={() => {
-                  setEditData({
-                    _id: '',
-                    username: '',
-                    password: '',
-                    status: 'active'
-                  });
-                  onOpenCreateModal();
-                }}
-              >
-                新增用户
-              </Button>
-            </Box>
+            <Flex mt={5} px={3} alignItems={'center'}>
+              <Box>
+                <Button
+                  size={isPc ? 'md' : 'sm'}
+                  variant={'whitePrimary'}
+                  leftIcon={<AddIcon fontSize={'10px'} />}
+                  onClick={() => {
+                    setEditData({
+                      _id: '',
+                      username: '',
+                      password: '',
+                      status: 'active'
+                    });
+                    onOpenCreateModal();
+                  }}
+                >
+                  新增用户
+                </Button>
+              </Box>
+            </Flex>
           </Center>
         </Flex>
 

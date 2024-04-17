@@ -136,7 +136,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
           <ImportantInform informs={importantInforms} refetch={refetchUnRead} />
         )}
       </Box>
-      {router.pathname !== '/login' && <TeamBox />}
+      {router.pathname !== '/login' && isPc && <TeamBox />}
       <Loading loading={loading} zIndex={999999} />
     </>
   );
