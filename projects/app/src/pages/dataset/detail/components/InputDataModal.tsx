@@ -56,7 +56,6 @@ import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useDatasetStore } from '@/web/core/dataset/store/dataset';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { uploadImage } from '@/web/core/dataset/api';
-import { MINIO_BASE_URL } from '@/middleware';
 
 export type InputDataType = {
   q: string;
@@ -443,12 +442,7 @@ const InputTab = ({
   };
   const url = getValue('image');
   useEffect(() => {
-    let imageUrl = ''
-    if (url) {
-      const imagePath = new URL(url)
-      imageUrl = `${MINIO_BASE_URL}${imagePath.pathname}`
-    }
-    
+    let imageUrl = url;
     setImageUrl(imageUrl);
   }, [url]);
 
@@ -492,8 +486,7 @@ const InputTab = ({
     },
     onSuccess(data: { url: string }) {
       if (data) {
-        const url = new URL(data.url)
-        setImageUrl(`${MINIO_BASE_URL}${url.pathname}`);
+        setImageUrl(data.url);
         setValue('image', data.url);
       }
     },

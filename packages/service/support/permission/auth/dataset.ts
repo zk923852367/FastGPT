@@ -116,16 +116,13 @@ export async function authDatasetCollection({
     }
 
     const isOwner = String(collection.tmbId) === tmbId || role === TeamMemberRoleEnum.owner;
-    const canWrite =
-      isOwner ||
-      (role !== TeamMemberRoleEnum.visitor &&
-        collection.datasetId.permission === PermissionTypeEnum.public);
+    const canWrite = isOwner || role !== TeamMemberRoleEnum.visitor;
 
-    if (per === 'r') {
-      if (!isOwner && collection.datasetId.permission !== PermissionTypeEnum.public) {
-        return Promise.reject(DatasetErrEnum.unAuthDatasetCollection);
-      }
-    }
+    // if (per === 'r') {
+    //   if (!isOwner && collection.datasetId.permission !== PermissionTypeEnum.public) {
+    //     return Promise.reject(DatasetErrEnum.unAuthDatasetCollection);
+    //   }
+    // }
     if (per === 'w' && !canWrite) {
       return Promise.reject(DatasetErrEnum.unAuthDatasetCollection);
     }

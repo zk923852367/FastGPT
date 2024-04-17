@@ -165,3 +165,5 @@ export const SearchScoreTypeMap = {
 
 export const CustomCollectionIcon = 'common/linkBlue';
 export const LinkCollectionIcon = 'common/linkBlue';
+
+export const MINIO_BASE_URL = '/api/minio';

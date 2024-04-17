@@ -1,3 +1,4 @@
+import { MINIO_BASE_URL } from '@fastgpt/global/core/dataset/constants';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -5,7 +6,6 @@ const APM_BASE_URL = '/api/proxy/apm';
 
 const APM_API_URL: string = process.env.ELASTIC_APM_SERVER_URL || '';
 const MINIO_API_URL: string = process.env.MINIO_URL || '';
-export const MINIO_BASE_URL = '/api/minio';
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {

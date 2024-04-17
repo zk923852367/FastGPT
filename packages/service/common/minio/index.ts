@@ -1,3 +1,5 @@
+import { MINIO_BASE_URL } from '@fastgpt/global/core/dataset/constants';
+
 var Minio = require('minio');
 
 function extractIPAndPort() {
@@ -63,7 +65,7 @@ export async function createFileUrl(
   return new Promise(async (resolve, reject) => {
     try {
       const newFileName = await storeFile(bucketName, dirName, fileName, filepath, mimetype);
-      const fileUrl = `${minioServer.minioUrl}/${bucketName}/${newFileName}`;
+      const fileUrl = `${MINIO_BASE_URL}/${bucketName}/${newFileName}`;
       resolve(fileUrl);
     } catch (error) {
       reject(error);
