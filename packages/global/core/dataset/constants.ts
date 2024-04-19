@@ -79,7 +79,8 @@ export enum ImportDataSourceEnum {
   fileCustom = 'fileCustom',
   fileWord = 'fileWord',
   csvTable = 'csvTable',
-  excelLocal = 'excelLocal'
+  excelLocal = 'excelLocal',
+  fileZip = 'fileZip'
 }
 
 export enum TrainingModeEnum {

@@ -126,6 +126,13 @@ export const postWordCollection = (data: FormData) =>
     },
     timeout: 120000
   });
+export const postZipCollection = (data: FormData) =>
+  POST<{ insertLen: number }>(`/core/dataset/collection/readZip`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    timeout: 120000
+  });
 
 /* =============================== data ==================================== */
 /* get dataset list */

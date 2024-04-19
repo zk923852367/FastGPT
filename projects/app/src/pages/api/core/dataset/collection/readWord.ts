@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           // 使用 Axios 发送文件给第三方服务
           const response = await axios.post(`${process.env.LLM_URL}/api/dataset/pushData`, {
             file_name: fileName,
-            parseImage: JSON.parse(fields.parseImage),
+            parse_image: JSON.parse(fields.parseImage),
             dataset_id: fields.dataset_id,
             bucket_name: bucket
           });

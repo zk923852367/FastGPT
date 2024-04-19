@@ -16,6 +16,7 @@ const FileCustomText = dynamic(() => import('./diffSource/FileCustomText'));
 const FileWord = dynamic(() => import('./diffSource/FileWord'));
 const TableLocal = dynamic(() => import('./diffSource/TableLocal'));
 const ExcelLocal = dynamic(() => import('./diffSource/ExcelLocal'));
+const FileZip = dynamic(() => import('./diffSource/FileZip'));
 
 const ImportDataset = () => {
   const { t } = useTranslation();
@@ -80,6 +81,11 @@ const ImportDataset = () => {
       {
         title: t('core.dataset.import.Select file')
       }
+    ],
+    [ImportDataSourceEnum.fileZip]: [
+      {
+        title: t('core.dataset.import.Select file')
+      }
     ]
   };
   const steps = modeSteps[source];
@@ -96,6 +102,7 @@ const ImportDataset = () => {
     if (source === ImportDataSourceEnum.fileWord) return FileWord;
     if (source === ImportDataSourceEnum.excelLocal) return ExcelLocal;
     if (source === ImportDataSourceEnum.csvTable) return TableLocal;
+    if (source === ImportDataSourceEnum.fileZip) return FileZip;
   }, [source]);
 
   return ImportComponent ? (

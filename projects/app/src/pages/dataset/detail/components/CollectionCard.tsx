@@ -458,7 +458,7 @@ const CollectionCard = () => {
                     {
                       label: (
                         <Flex>
-                          <MyIcon name={'core/dataset/tableCollection'} mr={2} w={'20px'} />
+                          <MyIcon name={'core/dataset/fileExcel'} mr={2} w={'20px'} />
                           {t('core.dataset.Excel collection')}
                         </Flex>
                       ),
@@ -468,6 +468,22 @@ const CollectionCard = () => {
                             ...router.query,
                             currentTab: TabEnum.import,
                             source: ImportDataSourceEnum.excelLocal
+                          }
+                        })
+                    },
+                    {
+                      label: (
+                        <Flex>
+                          <MyIcon name={'core/dataset/fileZip'} mr={2} w={'20px'} />
+                          {t('core.dataset.File zip')}
+                        </Flex>
+                      ),
+                      onClick: () =>
+                        router.replace({
+                          query: {
+                            ...router.query,
+                            currentTab: TabEnum.import,
+                            source: ImportDataSourceEnum.fileZip
                           }
                         })
                     }
