@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         files: { image: { filepath: string; originalFilename: string; mimetype: string } }
       ) => {
         const bucket = process.env.MINIO_BUCKET_NAME || 'default';
-        // const fileName = `${Date.now()}-${image.originalFilename}`; // 生成文件名
+        // const fileName = `${image.originalFilename}`; // 生成文件名
         // const fileStream = fs.createReadStream(image.filepath);
         if (err) {
           jsonRes(res, {

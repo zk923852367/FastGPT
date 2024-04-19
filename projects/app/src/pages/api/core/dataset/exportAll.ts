@@ -36,10 +36,9 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
       fields: '_id'
     });
 
-    res.setHeader('Content-Type', 'text/csv; charset=utf-8;');
-    res.setHeader('Content-Disposition', 'attachment; filename=dataset.csv; ');
+    let csvContent = '\uFEFFindex,content\n'; // CSV 头部
 
-    const cursor = MongoDatasetData.find<{
+    const cursor = await MongoDatasetData.find<{
       _id: string;
       collectionId: { name: string };
       q: string;
@@ -50,34 +49,22 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
         datasetId: { $in: datasets.map((d) => d._id) }
       },
       'q a'
-    )
-      .limit(50000)
-      .cursor();
+    ).limit(50000);
 
-    const write = responseWriteController({
-      res,
-      readStream: cursor
-    });
-
-    write(`\uFEFFindex,content`);
-
-    cursor.on('data', (doc) => {
+    // 将数据格式化为 CSV 字符串
+    cursor.forEach((doc) => {
       const q = doc.q.replace(/"/g, '""') || '';
       const a = doc.a.replace(/"/g, '""') || '';
-
-      write(`\n"${q}","${a}"`);
+      csvContent += `"${q}","${a}"\n`;
     });
 
-    cursor.on('end', () => {
-      cursor.close();
-      res.end();
-      updateExportDatasetLimit(teamId);
-    });
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8;');
+    res.setHeader('Content-Disposition', 'attachment; filename=dataset.csv; ');
 
-    cursor.on('error', (err) => {
-      addLog.error(`export dataset error`, err);
-      res.status(500);
-      res.end();
+    updateExportDatasetLimit(teamId);
+
+    jsonRes(res, {
+      data: csvContent
     });
   } catch (err) {
     res.status(500);

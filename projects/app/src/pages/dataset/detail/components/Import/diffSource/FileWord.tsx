@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ImportDataComponentProps } from '@/web/core/dataset/type.d';
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { ImportSourceItemType } from '@/web/core/dataset/type.d';
 import FileSelector, { type SelectFileItemType } from '@/web/core/dataset/components/FileSelector';
 import { getFileIcon } from '@fastgpt/global/common/file/icon';
@@ -52,7 +52,7 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
   // @ts-ignore
   const [selectFiles, setSelectFiles] = useState<ImportSourceItemType[]>(sources);
   const successFiles = useMemo(() => selectFiles.filter((item) => !item.errorMsg), [selectFiles]);
-
+  const [parseImage, setParseImage] = useState<boolean>(false)
   useEffect(() => {
     setSources(successFiles);
   }, [successFiles]);
@@ -64,6 +64,7 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
           const { file, folderPath } = selectFile;
           const formData = new FormData();
           formData.append('file', file);
+          formData.append('parseImage', String(parseImage));
           formData.append('dataset_id', datasetDetail._id);
           const data = await postWordCollection(formData);
 
@@ -101,6 +102,20 @@ const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () =
         maxSize={(feConfigs?.uploadFileMaxSize || 500) * 1024 * 1024}
         onSelectFile={onSelectFile}
       />
+
+      <FormControl display='flex' alignItems='center'>
+        <FormLabel htmlFor='parseImage' mb='0'>
+          <Box fontWeight={'bold'}>
+            是否解析图片含义？
+          </Box>
+        </FormLabel>
+        <Switch id='parseImage'
+          isChecked={parseImage}
+          onChange={(e) => {
+            setParseImage(e.target.checked)
+          }}
+         />
+      </FormControl>
 
       {/* render files */}
       <RenderUploadFiles files={selectFiles} setFiles={setSelectFiles} />

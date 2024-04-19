@@ -24,7 +24,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     await connectToDatabase();
     const body = req.body as CreateDatasetCollectionParams & PushDatasetDataProps;
-    debugger;
     const dataset = await MongoDataset.findById(body.datasetId);
 
     if (!dataset) {

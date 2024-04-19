@@ -37,7 +37,7 @@ export async function storeFile(
   filepath: string,
   mimetype: string
 ): Promise<string> {
-  const newFileName = dirName + '/' + `${Date.now()}-${fileName}`;
+  const newFileName = dirName + '/' + `${fileName}`;
   return new Promise(async (resolve, reject) => {
     try {
       const exist = await minioClient.bucketExists(bucketName);

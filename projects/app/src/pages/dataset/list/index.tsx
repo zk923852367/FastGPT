@@ -20,7 +20,8 @@ import {
   delDatasetById,
   getDatasetPaths,
   putDatasetById,
-  postCreateDataset
+  postCreateDataset,
+  downloadDataset
 } from '@/web/core/dataset/api';
 import { checkTeamExportDatasetLimit } from '@/web/support/user/team/api';
 import { useTranslation } from 'next-i18next';
@@ -100,8 +101,10 @@ const Kb = () => {
     mutationFn: async (dataset: DatasetItemType) => {
       setLoading(true);
       await checkTeamExportDatasetLimit(dataset._id);
+      const fileStream = await downloadDataset(dataset._id);
+      let url = window.URL.createObjectURL(new Blob([fileStream])); 
       const a = document.createElement('a');
-      a.href = `/api/core/dataset/exportAll?datasetId=${dataset._id}`;
+      a.href = url;
       a.download = `${dataset.name}.csv`;
       document.body.appendChild(a);
       a.click();

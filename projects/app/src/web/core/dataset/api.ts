@@ -69,6 +69,8 @@ export const postWebsiteSync = (data: PostWebsiteSyncParams) =>
     timeout: 600000
   }).catch();
 
+export const downloadDataset = (id: string) => GET<Blob>(`/core/dataset/exportAll?datasetId=${id}`);
+
 /* =========== search test ============ */
 export const postSearchText = (data: SearchTestProps) =>
   POST<SearchTestResponse>(`/core/dataset/searchTest`, data);
@@ -105,7 +107,8 @@ export const uploadImage = (data: FormData) =>
   POST<{ url: string }>(`/core/dataset/data/uploadImage`, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    timeout: 120000
   });
 export const deletUploadImage = (data: { image: string }) =>
   POST<{ url: string }>(`/core/dataset/data/delImage`, data);
@@ -113,13 +116,15 @@ export const postExcelCollection = (data: FormData) =>
   POST<{ insertLen: number }>(`/core/dataset/collection/readExcel`, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    timeout: 120000
   });
 export const postWordCollection = (data: FormData) =>
   POST<{ insertLen: number }>(`/core/dataset/collection/readWord`, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    timeout: 120000
   });
 
 /* =============================== data ==================================== */
