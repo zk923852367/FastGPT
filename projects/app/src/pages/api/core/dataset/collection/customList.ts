@@ -18,8 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     await connectToDatabase();
 
     let {
-      pageNum = 1,
-      pageSize = 10,
       datasetId,
       parentId = null,
       searchText = '',
@@ -27,8 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       simple = false
     } = req.body as GetDatasetCollectionsProps;
     searchText = searchText?.replace(/'/g, '');
-    pageSize = Math.min(pageSize, 30);
-    debugger;
     const dataset = await MongoDataset.findById(datasetId);
 
     if (!dataset) {
@@ -54,10 +50,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           updateTime: -1
         })
         .lean();
-      return jsonRes<PagingData<DatasetCollectionsListItemType>>(res, {
+      return jsonRes(res, {
         data: {
-          pageNum,
-          pageSize,
           data: await Promise.all(
             collections.map(async (item) => ({
               ...item,
@@ -65,25 +59,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
               trainingAmount: 0,
               canWrite: true // admin or team owner can write
             }))
-          ),
-          total: await MongoDatasetCollection.countDocuments(match)
+          )
         }
       });
     }
 
-    const [collections, total]: [DatasetCollectionsListItemType[], number] = await Promise.all([
+    const [collections]: [DatasetCollectionsListItemType[]] = await Promise.all([
       MongoDatasetCollection.aggregate([
         {
           $match: match
         },
         {
           $sort: { updateTime: -1 }
-        },
-        {
-          $skip: (pageNum - 1) * pageSize
-        },
-        {
-          $limit: pageSize
         },
         // count training data
         {
@@ -97,8 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     $and: [{ $eq: ['$teamId', '$$team_id'] }, { $eq: ['$collectionId', '$$id'] }]
                   }
                 }
-              },
-              { $count: 'count' }
+              }
             ],
             as: 'trainingCount'
           }
@@ -119,8 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     ]
                   }
                 }
-              },
-              { $count: 'count' }
+              }
             ],
             as: 'dataCount'
           }
@@ -144,8 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }
           }
         }
-      ]),
-      MongoDatasetCollection.countDocuments(match)
+      ])
     ]);
 
     const data = await Promise.all(
@@ -160,12 +144,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // count collections
-    jsonRes<PagingData<DatasetCollectionsListItemType>>(res, {
+    jsonRes(res, {
       data: {
-        pageNum,
-        pageSize,
-        data,
-        total
+        data
       }
     });
   } catch (err) {
